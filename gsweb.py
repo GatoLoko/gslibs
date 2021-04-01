@@ -12,11 +12,11 @@ import urllib.request
 import urllib.parse
 import urllib.error
 import socket
-from bs4 import BeautifulSoup
 import gzip
-import brotli
+# import brotli
 from io import BytesIO
 import platform
+from bs4 import BeautifulSoup
 
 
 # set timeout to 10 seconds
