@@ -43,6 +43,8 @@ def get_url(url):
     request.add_header('Accepting-encoding', 'gzip, br')
     # Use our custom User-Agent
     request.add_header('User-Agent', USER_AGENT)
+    # Add DoNotTrack header, do the right thing even if nobody cares
+    request.add_header('DNT', '1')
 
     while tryes > 0:
         try:
