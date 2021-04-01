@@ -30,7 +30,8 @@ USER_AGENT = 'Mozilla/5.0 compatible (' + platform.system() + ' ' + \
 
 # Provide a function to replace the default User-Agent:
 def set_user_agent(agent):
-    USERAGENT = agent
+    global USER_AGENT
+    USER_AGENT = agent
 
 
 def get_url(url):
