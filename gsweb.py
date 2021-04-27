@@ -48,7 +48,7 @@ def get_url(url):
 
     while tryes > 0:
         try:
-            response = urllib.request.urlopen(url)
+            response = urllib.request.urlopen(request)
             break
         except socket.timeout:
             tryes -= 1
