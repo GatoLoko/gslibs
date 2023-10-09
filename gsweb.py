@@ -34,6 +34,15 @@ def set_user_agent(agent):
     USER_AGENT = agent
 
 
+def quote(url):
+    """ Quote a URL to ensure compatibility with unusual caracters in them.
+
+    Added for Wattpad2Epub"""
+    parts = url.rsplit('/', 1)
+    url = parts[0] + '/' + urllib.parse.quote(parts[-1])
+    return url
+
+
 def get_url(url):
     tryes = 5
     response = None
