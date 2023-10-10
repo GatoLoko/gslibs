@@ -26,6 +26,8 @@ socket.setdefaulttimeout(10)
 # to mess with us.
 USER_AGENT = 'Mozilla/5.0 compatible (' + platform.system() + ' ' + \
     platform.machine() + '; Novel-Indexer-Bot)'
+# USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (' + \
+#     'KHTML, like Gecko) Chrome/97.0.4692.20 Safari/537.36'
 
 
 # Provide a function to replace the default User-Agent:
@@ -65,20 +67,21 @@ def get_url(url):
             if isinstance(error.reason, socket.timeout):
                 tryes -= 1
             else:
-                print("Se produjo un error de url: -%s-" % error.reason)
-                quit()
+                raise SystemExit("An URL error happened: -%s-" % error.reason)\
+                    from error
 
     encoding = response.info().get('Content-Encoding')
     if encoding == 'gzip':
         buffer = BytesIO(response.read())
-        html = gzip.GzipFile(fileobj=buffer)
+        content = gzip.GzipFile(fileobj=buffer)
     elif encoding == 'br':
-        # html = brotli.decompress(response.content)
-        html = response.text
+        content = brotli.decompress(response.content)
+        # content = response.text
+        # print("Brotli: " + content)
     else:
-        html = response.read()
+        content = response.read()
     response.close()
-    return html
+    return content
 
 
 def get_soup(url):
