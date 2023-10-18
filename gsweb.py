@@ -7,33 +7,28 @@ Custom networking functions
 Mostly customized http request for now
 """
 
-
-import urllib.request
-import urllib.parse
-import urllib.error
-import socket
-import gzip
-# import brotli
-from io import BytesIO
 import platform
+import socket
 from bs4 import BeautifulSoup
-
+import requests
+import shutil
 
 # set timeout to 10 seconds
 socket.setdefaulttimeout(10)
 
 # Create our own User-Agent string. We may need to fake this if a server tryes
 # to mess with us.
-USER_AGENT = 'Mozilla/5.0 compatible (' + platform.system() + ' ' + \
-    platform.machine() + '; Novel-Indexer-Bot)'
-# USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (' + \
-#     'KHTML, like Gecko) Chrome/97.0.4692.20 Safari/537.36'
+user_agent = f'Mozilla/5.0 compatible ({platform.system()} {platform.machine()}; Novel-Indexer-Bot)'
 
+#Start building our session
+session = requests.session()
+session.headers.update({'user-agent': user_agent})
 
 # Provide a function to replace the default User-Agent:
 def set_user_agent(agent):
-    global USER_AGENT
-    USER_AGENT = agent
+    ''' Function to replace the default User-Agent '''
+    global user_agent
+    user_agent = agent
 
 
 def quote(url):
@@ -41,47 +36,41 @@ def quote(url):
 
     Added for Wattpad2Epub"""
     parts = url.rsplit('/', 1)
-    url = parts[0] + '/' + urllib.parse.quote(parts[-1])
+    url = f"{parts[0]}/{requests.utils.quote(parts[1])}"
     return url
 
 
 def get_url(url):
     tryes = 5
-    response = None
-    # Build our request
-    request = urllib.request.Request(url)
-    # Accept compressed content
-    request.add_header('Accepting-encoding', 'gzip, br')
-    # Use our custom User-Agent
-    request.add_header('User-Agent', USER_AGENT)
-    # Add DoNotTrack header, do the right thing even if nobody cares
-    request.add_header('DNT', '1')
-
-    while tryes > 0:
-        try:
-            response = urllib.request.urlopen(request)
-            break
-        except socket.timeout:
-            tryes -= 1
-        except urllib.error.URLError as error:
-            if isinstance(error.reason, socket.timeout):
+    with session as s:
+        while tryes > 0:
+            try:
+                response = s.get(quote(url))
+                break
+            except socket.timeout:
                 tryes -= 1
             else:
-                raise SystemExit("An URL error happened: -%s-" % error.reason)\
-                    from error
+                raise SystemExit("An URL error happened: --")
+        html = response.text
+        # with open('htmllog.txt', 'w') as file:
+        #     file.write(html)
+    return html
 
-    encoding = response.info().get('Content-Encoding')
-    if encoding == 'gzip':
-        buffer = BytesIO(response.read())
-        content = gzip.GzipFile(fileobj=buffer)
-    elif encoding == 'br':
-        content = brotli.decompress(response.content)
-        # content = response.text
-        # print("Brotli: " + content)
-    else:
-        content = response.read()
-    response.close()
-    return content
+def get_binary(url, file):
+    tryes = 5
+    while tryes > 0:
+        try:
+            response = requests.get(quote(url), stream=True, timeout=500)
+            if response.status_code == 200:
+                response.raw.decode_content = True
+                with open(file, 'wb') as f:
+                    shutil.copyfileobj(response.raw, f)
+            return True
+        except socket.timeout:
+            tryes -= 1
+        else:
+            raise SystemExit('Something went really wrong')
+            return False
 
 
 def get_soup(url):
