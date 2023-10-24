@@ -25,13 +25,13 @@ session = requests.session()
 session.headers.update({'user-agent': user_agent})
 
 # Provide a function to replace the default User-Agent:
-def set_user_agent(agent: str):
+def set_user_agent(agent: str) -> None:
     """Function to replace the default User-Agent"""
     session.headers.update({"user-agent": agent})
 
 
-def quote(url):
-    """ Quote a URL to ensure compatibility with unusual caracters in them.
+def quote(url: str) -> str:
+    """Quote a URL to ensure compatibility with unusual caracters in them.
 
     Added for Wattpad2Epub"""
     parts = url.rsplit('/', 1)
@@ -39,7 +39,7 @@ def quote(url):
     return url
 
 
-def get_url(url):
+def get_url(url: str) -> str | None:
     tryes = 5
     with session as s:
         while tryes > 0:
@@ -55,7 +55,7 @@ def get_url(url):
         #     file.write(html)
     return html
 
-def get_binary(url, file):
+def download_binary(url: str, filename: str) -> bool:
     tryes = 5
     while tryes > 0:
         try:
