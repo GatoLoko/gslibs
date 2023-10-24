@@ -63,17 +63,18 @@ def download_binary(url: str, filename: str) -> bool:
     tryes = 5
     while tryes > 0:
         try:
-            response = requests.get(quote(url), stream=True, timeout=500)
+            url = quote(url)
+            response = requests.get(url, stream=True, timeout=20)
             if response.status_code == 200:
                 response.raw.decode_content = True
-                with open(file, 'wb') as f:
+                with open(filename, "wb") as f:
                     shutil.copyfileobj(response.raw, f)
-            return True
+                return True
         except socket.timeout:
             tryes -= 1
         else:
-            raise SystemExit('Something went really wrong')
-            return False
+            tryes -= 1
+    return False
 
 
 def get_soup(url: str) -> BeautifulSoup:
