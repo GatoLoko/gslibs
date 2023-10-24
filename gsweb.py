@@ -44,16 +44,20 @@ def get_url(url: str) -> str | None:
     with session as s:
         while tryes > 0:
             try:
+                url = quote(url)
                 response = s.get(quote(url))
-                break
+                if response.status_code == 200:
+                    # with open("htmllog.txt", "w") as file:
+                    #     file.write(html)
+                    return response.text
+                else:
+                    print("Status code: {response.status_code}")
+                    tryes -= 1
             except socket.timeout:
                 tryes -= 1
             else:
                 raise SystemExit("An URL error happened: --")
-        html = response.text
-        # with open('htmllog.txt', 'w') as file:
-        #     file.write(html)
-    return html
+    return None
 
 def download_binary(url: str, filename: str) -> bool:
     tryes = 5
