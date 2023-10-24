@@ -25,10 +25,9 @@ session = requests.session()
 session.headers.update({'user-agent': user_agent})
 
 # Provide a function to replace the default User-Agent:
-def set_user_agent(agent):
-    ''' Function to replace the default User-Agent '''
-    global user_agent
-    user_agent = agent
+def set_user_agent(agent: str):
+    """Function to replace the default User-Agent"""
+    session.headers.update({"user-agent": agent})
 
 
 def quote(url):
