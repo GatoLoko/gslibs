@@ -76,7 +76,7 @@ def download_binary(url: str, filename: str) -> bool:
             return False
 
 
-def get_soup(url):
+def get_soup(url: str) -> BeautifulSoup:
     html = get_url(url)
     soup = BeautifulSoup(html, 'lxml')
     return soup
