@@ -18,11 +18,12 @@ socket.setdefaulttimeout(10)
 
 # Create our own User-Agent string. We may need to fake this if a server tryes
 # to mess with us.
-user_agent = f'Mozilla/5.0 compatible ({platform.system()} {platform.machine()}; Novel-Indexer-Bot)'
+user_agent = f"Mozilla/5.0 compatible ({platform.system()} {platform.machine()}; Novel-Indexer-Bot)"
 
-#Start building our session
+# Start building our session
 session = requests.session()
-session.headers.update({'user-agent': user_agent})
+session.headers.update({"user-agent": user_agent})
+
 
 # Provide a function to replace the default User-Agent:
 def set_user_agent(agent: str) -> None:
@@ -34,7 +35,7 @@ def quote(url: str) -> str:
     """Quote a URL to ensure compatibility with unusual caracters in them.
 
     Added for Wattpad2Epub"""
-    parts = url.rsplit('/', 1)
+    parts = url.rsplit("/", 1)
     url = f"{parts[0]}/{requests.utils.quote(parts[1])}"
     return url
 
@@ -59,6 +60,7 @@ def get_url(url: str) -> str | None:
                 raise SystemExit("An URL error happened: --")
     return None
 
+
 def download_binary(url: str, filename: str) -> bool:
     tryes = 5
     while tryes > 0:
@@ -79,5 +81,5 @@ def download_binary(url: str, filename: str) -> bool:
 
 def get_soup(url: str) -> BeautifulSoup:
     html = get_url(url)
-    soup = BeautifulSoup(html, 'lxml')
+    soup = BeautifulSoup(html, "lxml")
     return soup
