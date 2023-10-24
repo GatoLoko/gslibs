@@ -34,7 +34,7 @@ def set_user_agent(agent: str) -> None:
 def quote(url: str) -> str:
     """Quote a URL to ensure compatibility with unusual caracters in them.
 
-    Added for Wattpad2Epub"""
+    Added for Wattpad2Epub, but good for everything."""
     parts = url.rsplit("/", 1)
     url = f"{parts[0]}/{requests.utils.quote(parts[1])}"
     return url
@@ -81,5 +81,6 @@ def download_binary(url: str, filename: str) -> bool:
 
 def get_soup(url: str) -> BeautifulSoup:
     html = get_url(url)
-    soup = BeautifulSoup(html, "lxml")
+    # soup = BeautifulSoup(html, "lxml")
+    soup = BeautifulSoup(html, features="xml")
     return soup
