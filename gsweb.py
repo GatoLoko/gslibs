@@ -52,7 +52,7 @@ def get_url(url: str) -> str | None:
                     #     file.write(html)
                     return response.text
                 else:
-                    print("Status code: {response.status_code}")
+                    print(f"Status code: {response.status_code}")
                     tryes -= 1
             except socket.timeout:
                 tryes -= 1
