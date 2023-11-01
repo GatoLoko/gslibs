@@ -40,13 +40,14 @@ def quote(url: str) -> str:
     return url
 
 
-def get_url(url: str) -> str | None:
+def get_url(url: str, quoted: bool = False) -> str | None:
     tryes = 5
     with session as s:
         while tryes > 0:
             try:
-                url = quote(url)
-                response = s.get(quote(url))
+                if quoted:
+                    url = quote(url)
+                response = s.get(url)
                 if response.status_code == 200:
                     # with open("htmllog.txt", "w") as file:
                     #     file.write(html)
@@ -61,11 +62,12 @@ def get_url(url: str) -> str | None:
     return None
 
 
-def download_binary(url: str, filename: str) -> bool:
+def download_binary(url: str, filename: str, quoted: bool = False) -> bool:
     tryes = 5
     while tryes > 0:
         try:
-            url = quote(url)
+            if quoted:
+                url = quote(url)
             response = requests.get(url, stream=True, timeout=20)
             if response.status_code == 200:
                 response.raw.decode_content = True
