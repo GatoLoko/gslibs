@@ -83,6 +83,11 @@ def download_binary(url: str, filename: str, quoted: bool = False) -> bool:
 
 def get_soup(url: str) -> BeautifulSoup:
     html = get_url(url)
-    # soup = BeautifulSoup(html, "lxml")
-    soup = BeautifulSoup(html, features="xml")
+    if "litero" in url:
+        # Although litero correctly serves us html and identifies them right in
+        # their headers, BeautifulSoup thinks it's XML and tells us to use
+        # 'features="XML"', but if we do that, something breaks.
+        soup = BeautifulSoup(html, "lxml")
+    else:
+        soup = BeautifulSoup(html, features="xml")
     return soup
